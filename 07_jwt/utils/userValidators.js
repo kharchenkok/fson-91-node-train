@@ -16,6 +16,28 @@ const createUserDataValidator = joiValidator((data) =>
     })
     .validate(data));
 
+const signupUserDataValidator = joiValidator((data) =>
+  Joi.object()
+    .options({ abortEarly: false })
+    .keys({
+      name: Joi.string().min(2).required(),
+      year: Joi.number()
+        .min(1900)
+        .max(new Date().getFullYear() - 18),
+      email: Joi.string().email().required(),
+      password: Joi.string().regex(PASSWD_REGEX).required(),
+    })
+    .validate(data));
+
+const loginUserDataValidator = joiValidator((data) =>
+  Joi.object()
+    .options({ abortEarly: false })
+    .keys({
+      email: Joi.string().email().required(),
+      password: Joi.string().regex(PASSWD_REGEX).required(),
+    })
+    .validate(data));
+
 const updateUserDataValidator = joiValidator((data) =>
   Joi.object()
     .options({ abortEarly: false })
@@ -29,4 +51,6 @@ const updateUserDataValidator = joiValidator((data) =>
     })
     .validate(data));
 
-export { createUserDataValidator, updateUserDataValidator };
+export {
+  createUserDataValidator, updateUserDataValidator, signupUserDataValidator, loginUserDataValidator
+};

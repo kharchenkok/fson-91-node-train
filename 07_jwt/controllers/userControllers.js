@@ -25,3 +25,7 @@ export const deleteUser = catchAsync(async (req, res) => {
   await userService.hideUser(req.params.id);
   res.sendStatus(204);
 });
+
+export const getMe = (req, res) => {
+  res.status(200).json({ msg: 'Success', user: req.user });
+};

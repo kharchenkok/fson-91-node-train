@@ -1,15 +1,14 @@
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
-import dotenv from 'dotenv';
 import mongoose from 'mongoose';
-import { userRouter } from './routes/index.js';
+import './configs/dotenvConfig.js';
+import { authRouter, userRouter } from './routes/index.js';
 import { globalErrorHendler } from './controllers/errorController.js';
-
-dotenv.config({ path: process.env.NODE_ENV === 'production' ? './envs/production.env' : './envs/development.env', });
+import { serverConfig } from './configs/index.js';
 
 const app = express();
-mongoose.connect(process.env.MONGO_URL).then(() => {
+mongoose.connect(serverConfig.mongoUrl).then(() => {
   console.log('MongoDB connected');
 }).catch((err) => {
   console.log(err);
@@ -17,7 +16,7 @@ mongoose.connect(process.env.MONGO_URL).then(() => {
 });
 
 // MIDDLEWARES====================================
-if (process.env.NODE_ENV === 'development') {
+if (serverConfig.environment === 'development') {
   app.use(morgan('dev'));
 }
 app.use(express.json());
@@ -25,6 +24,7 @@ app.use(cors());
 // ROUTES====================================
 const pathPrefix = '/api/v1';
 app.use(`${pathPrefix}/users`, userRouter);
+app.use(`${pathPrefix}/auth`, authRouter);
 
 // 404 handler error====================================
 app.all('*', (req, res) => {
